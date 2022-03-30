@@ -22,4 +22,21 @@ public class Model {
 	public Studente getStudenteByMatricola(int matricola) {
 		return this.studenteDao.getStudenteByMatricola(matricola);
 	}
+	
+	public List<Studente> getStudentiIscrittiAlCorso(String codins) {
+		return this.corsoDao.getStudentiIscrittiAlCorso(this.corsoDao.getCorso(codins));
+	}
+	
+	public List<Corso> getCorsiStudente(int matricola) {
+		return this.studenteDao.getCorsiStudente(this.studenteDao.getStudenteByMatricola(matricola));
+	}
+	
+	public boolean isStudenteIscrittoACorso(int matricola, String codins) {
+		return this.studenteDao.isStudenteIscrittoACorso(this.studenteDao.getStudenteByMatricola(matricola),
+				this.corsoDao.getCorso(codins));
+	}
+	
+	public boolean iscriviStudenteACorso(int matricola, String codins) {
+		return this.corsoDao.iscriviStudenteACorso(this.getStudenteByMatricola(matricola), this.corsoDao.getCorso(codins));
+	}
 }

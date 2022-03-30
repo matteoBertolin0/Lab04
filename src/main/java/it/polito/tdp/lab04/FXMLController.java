@@ -43,11 +43,10 @@ public class FXMLController {
 
     @FXML
     void handleAutofill(ActionEvent event) {
-    	String serach = txtMatricola.getText();
-    	boolean trovato = false;
+    	String search = txtMatricola.getText();
     	try{
-    		txtCognome.setText(this.model.getStudenteByMatricola(Integer.parseInt(serach)).getCognome());
-    		txtNome.setText(this.model.getStudenteByMatricola(Integer.parseInt(serach)).getNome());
+    		txtCognome.setText(this.model.getStudenteByMatricola(Integer.parseInt(search)).getCognome());
+    		txtNome.setText(this.model.getStudenteByMatricola(Integer.parseInt(search)).getNome());
     	}catch(NumberFormatException e) {
     		e.printStackTrace();
     		txtRisultato.setText("Matricola non valida");
@@ -57,17 +56,62 @@ public class FXMLController {
 
     @FXML
     void handleCercaCorsi(ActionEvent event) {
-
+    	try {
+    		String matr = txtMatricola.getText();
+    		txtRisultato.clear();
+    		for(Corso c : this.model.getCorsiStudente(Integer.parseInt(matr))) {
+    			txtRisultato.appendText(c.toString()+"\n");
+    		}
+    	}catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		txtRisultato.setText("Inserire matricola valida");
+    	}
     }
 
     @FXML
     void handleCercaIscrittiCorso(ActionEvent event) {
+    	try {
+        	String corso = cmbCorsi.getValue();
+        	txtRisultato.clear();
+        	for(Studente s : this.model.getStudentiIscrittiAlCorso(corso.substring(0, 7))) {
+        			txtRisultato.appendText(s.toString()+"\n");
+        	}
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		txtRisultato.setText("Inserire un corso");
+    	}
 
     }
 
     @FXML
     void handleIscrivi(ActionEvent event) {
-
+    	try {
+        	String corso = cmbCorsi.getValue().substring(0, 7);
+        	int matricola=0;
+        	try{
+        		matricola = Integer.parseInt(txtMatricola.getText());
+        	}catch(NumberFormatException e) {
+        		e.printStackTrace();
+        		txtRisultato.setText("Matricola non valida");
+        	}
+        	
+        	txtRisultato.clear();
+        	boolean search = this.model.isStudenteIscrittoACorso(matricola, corso);
+        	
+        	if(search) {
+        		txtRisultato.setText("Studente già iscritto a questo corso");
+        	}else {
+        		boolean ris =this.model.iscriviStudenteACorso(matricola, corso);
+        		if(ris)
+        			txtRisultato.setText("Studente Iscritto correttamente");
+        		else
+        			txtRisultato.setText("Iscrizione non riuscita");
+        	}
+        	
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		txtRisultato.setText("Dat inseriti non validi");
+    	}
     }
 
     @FXML
